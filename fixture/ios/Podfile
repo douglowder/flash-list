@@ -23,6 +23,7 @@ target 'FlatListPro' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod "RNFlashList", path: "../../RNFlashList.podspec", testspecs: ['Tests'], inhibit_warnings: false
   target 'FlatListProTests' do
     inherit! :complete
     # Pods for testing
