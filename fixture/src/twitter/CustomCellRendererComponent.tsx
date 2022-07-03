@@ -1,14 +1,15 @@
-import React, { useEffect, useRef } from "react";
-import { CellContainer } from "@shopify/flash-list";
+import React, {useEffect, useRef} from 'react';
+import {CellContainer} from '@shopify/flash-list';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withSpring,
-} from "react-native-reanimated";
-import { View } from "react-native";
+} from 'react-native-reanimated';
+import {View} from 'react-native';
 
-import Twitter from "./Twitter";
+import Twitter from './Twitter';
+import useBackNavigation from '../useBackNavigation';
 
 const AnimatedCellContainer = Animated.createAnimatedComponent(CellContainer);
 
@@ -17,7 +18,7 @@ export const CustomCellRendererComponent = React.forwardRef((props: any, _) => {
   const cellContainerRef = useRef<View>(null);
   const animatedStyles = useAnimatedStyle(() => {
     return {
-      transform: [{ translateY: offset.value }],
+      transform: [{translateY: offset.value}],
     };
   }, []);
   useEffect(() => {
@@ -26,23 +27,25 @@ export const CustomCellRendererComponent = React.forwardRef((props: any, _) => {
   }, []);
   useEffect(() => {
     // You can get access to animated cell container's ref. This step is just for demonstration.
-    cellContainerRef.current?.setNativeProps({ opacity: 1 });
+    cellContainerRef.current?.setNativeProps({opacity: 1});
   });
 
   return (
     <AnimatedCellContainer
       ref={cellContainerRef}
       {...props}
-      style={[animatedStyles, { opacity: 0 }, props.style]}
+      style={[animatedStyles, {opacity: 0}, props.style]}
     />
   );
 });
 
-CustomCellRendererComponent.displayName = "CustomCellRendererComponent";
+CustomCellRendererComponent.displayName = 'CustomCellRendererComponent';
 
-const TwitterCustomCellContainer = () => {
+const TwitterCustomCellContainer = ({navigation}: {navigation: any}) => {
+  useBackNavigation(navigation);
   return (
     <Twitter
+      navigation={navigation}
       disableAutoLayout
       CellRendererComponent={CustomCellRendererComponent}
     />

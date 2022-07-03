@@ -1,25 +1,26 @@
-import React, { useContext, useRef, useState } from "react";
+import React, {useContext, useRef, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ActivityIndicator,
   ViewabilityConfig,
-} from "react-native";
-import { BlankAreaEventHandler, FlashList } from "@shopify/flash-list";
-import { FlashListPerformanceView } from "@shopify/react-native-performance-lists-profiler";
+} from 'react-native';
+import {BlankAreaEventHandler, FlashList} from '@shopify/flash-list';
 
-import { DebugContext } from "../Debug";
+import {DebugContext} from '../Debug';
 
-import TweetCell from "./TweetCell";
-import { tweets as tweetsData } from "./data/tweets";
-import Tweet from "./models/Tweet";
+import TweetCell from './TweetCell';
+import {tweets as tweetsData} from './data/tweets';
+import Tweet from './models/Tweet';
+import useBackNavigation from '../useBackNavigation';
 
 export interface TwitterProps {
   instance?: React.RefObject<FlashList<Tweet>>;
   blankAreaTracker?: BlankAreaEventHandler;
   CellRendererComponent?: React.ComponentType<any>;
   disableAutoLayout?: boolean;
+  navigation: any;
 }
 
 const Twitter = ({
@@ -27,12 +28,13 @@ const Twitter = ({
   blankAreaTracker,
   CellRendererComponent,
   disableAutoLayout,
+  navigation,
 }: TwitterProps) => {
   const debugContext = useContext(DebugContext);
   const [refreshing, setRefreshing] = useState(false);
   const remainingTweets = useRef([...tweetsData].splice(10, tweetsData.length));
   const [tweets, setTweets] = useState(
-    debugContext.pagingEnabled ? [...tweetsData].splice(0, 10) : tweetsData
+    debugContext.pagingEnabled ? [...tweetsData].splice(0, 10) : tweetsData,
   );
   const viewabilityConfig = useRef<ViewabilityConfig>({
     waitForInteraction: true,
@@ -40,59 +42,59 @@ const Twitter = ({
     minimumViewTime: 1000,
   }).current;
 
+  useBackNavigation(navigation);
+
   return (
-    <FlashListPerformanceView listName="Twitter">
-      <FlashList
-        ref={instance}
-        onBlankArea={blankAreaTracker}
-        testID="FlashList"
-        keyExtractor={(item) => {
-          return item.id;
-        }}
-        renderItem={({ item }) => {
-          return <TweetCell tweet={item} />;
-        }}
-        refreshing={refreshing}
-        onRefresh={() => {
-          setRefreshing(true);
-          setTimeout(() => {
-            setRefreshing(false);
-            const reversedTweets = [...tweets];
-            reversedTweets.reverse();
-            setTweets(reversedTweets);
-          }, 500);
-        }}
-        CellRendererComponent={CellRendererComponent}
-        onEndReached={() => {
-          if (!debugContext.pagingEnabled) {
-            return;
-          }
-          setTimeout(() => {
-            setTweets([...tweets, ...remainingTweets.current.splice(0, 10)]);
-          }, 1000);
-        }}
-        ListHeaderComponent={Header}
-        ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
-        ListFooterComponent={() => {
-          return (
-            <Footer
-              isLoading={tweets.length !== tweetsData.length}
-              isPagingEnabled={debugContext.pagingEnabled}
-            />
-          );
-        }}
-        ListEmptyComponent={Empty()}
-        estimatedItemSize={150}
-        ItemSeparatorComponent={Divider}
-        data={debugContext.emptyListEnabled ? [] : tweets}
-        initialScrollIndex={debugContext.initialScrollIndex}
-        viewabilityConfig={viewabilityConfig}
-        onViewableItemsChanged={(info) => {
-          console.log(info);
-        }}
-        disableAutoLayout={disableAutoLayout}
-      />
-    </FlashListPerformanceView>
+    <FlashList
+      ref={instance}
+      onBlankArea={blankAreaTracker}
+      testID="FlashList"
+      keyExtractor={item => {
+        return item.id;
+      }}
+      renderItem={({item}) => {
+        return <TweetCell tweet={item} />;
+      }}
+      refreshing={refreshing}
+      onRefresh={() => {
+        setRefreshing(true);
+        setTimeout(() => {
+          setRefreshing(false);
+          const reversedTweets = [...tweets];
+          reversedTweets.reverse();
+          setTweets(reversedTweets);
+        }, 500);
+      }}
+      CellRendererComponent={CellRendererComponent}
+      onEndReached={() => {
+        if (!debugContext.pagingEnabled) {
+          return;
+        }
+        setTimeout(() => {
+          setTweets([...tweets, ...remainingTweets.current.splice(0, 10)]);
+        }, 1000);
+      }}
+      ListHeaderComponent={Header}
+      ListHeaderComponentStyle={{backgroundColor: '#ccc'}}
+      ListFooterComponent={() => {
+        return (
+          <Footer
+            isLoading={tweets.length !== tweetsData.length}
+            isPagingEnabled={debugContext.pagingEnabled}
+          />
+        );
+      }}
+      ListEmptyComponent={Empty()}
+      estimatedItemSize={150}
+      ItemSeparatorComponent={Divider}
+      data={debugContext.emptyListEnabled ? [] : tweets}
+      initialScrollIndex={debugContext.initialScrollIndex}
+      viewabilityConfig={viewabilityConfig}
+      onViewableItemsChanged={info => {
+        console.log(info);
+      }}
+      disableAutoLayout={disableAutoLayout}
+    />
   );
 };
 
@@ -113,7 +115,7 @@ interface FooterProps {
   isPagingEnabled: boolean;
 }
 
-export const Footer = ({ isLoading, isPagingEnabled }: FooterProps) => {
+export const Footer = ({isLoading, isPagingEnabled}: FooterProps) => {
   return (
     <View style={styles.footer}>
       {isLoading && isPagingEnabled ? (
@@ -126,7 +128,7 @@ export const Footer = ({ isLoading, isPagingEnabled }: FooterProps) => {
 };
 
 export const Empty = () => {
-  const title = "Welcome to your timeline";
+  const title = 'Welcome to your timeline';
   const subTitle =
     "It's empty now but it won't be for long. Start following peopled you'll see Tweets show up here";
   return (
@@ -139,23 +141,23 @@ export const Empty = () => {
 
 const styles = StyleSheet.create({
   divider: {
-    width: "100%",
+    width: '100%',
     height: StyleSheet.hairlineWidth,
-    backgroundColor: "#DDD",
+    backgroundColor: '#DDD',
   },
   header: {
     height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#1DA1F2",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#1DA1F2',
   },
   footer: {
     height: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     padding: 8,
     borderRadius: 12,
     fontSize: 12,
@@ -166,19 +168,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   emptyComponentTitle: {
-    color: "black",
+    color: 'black',
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   emptyComponentSubtitle: {
-    color: "#808080",
+    color: '#808080',
     padding: 8,
     fontSize: 14,
-    textAlign: "center",
+    textAlign: 'center',
   },
   emptyComponent: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
   },
 });

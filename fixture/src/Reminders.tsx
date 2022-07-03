@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -9,9 +9,9 @@ import {
   TouchableWithoutFeedback,
   ViewProps,
   Pressable,
-} from "react-native";
-import { FlashList } from "@shopify/flash-list";
-import Animated, { FadeOut, Layout } from "react-native-reanimated";
+} from 'react-native';
+import {FlashList} from '@shopify/flash-list';
+import Animated, {FadeOut, Layout} from 'react-native-reanimated';
 
 interface Reminder {
   id: string;
@@ -25,8 +25,8 @@ interface CheckboxProps {
 
 const Checkbox = (props: CheckboxProps) => {
   const source = props.checked
-    ? require("assets/checkboxOn.png")
-    : require("assets/checkboxOff.png");
+    ? require('assets/checkboxOn.png')
+    : require('assets/checkboxOff.png');
   return <Image source={source} style={styles.checkboxImage} />;
 };
 
@@ -67,8 +67,7 @@ const ReminderCell = ({
       onLayout={onLayout}
       style={styles.cell}
       layout={Layout}
-      exiting={FadeOut}
-    >
+      exiting={FadeOut}>
       <View style={styles.checkbox}>
         <Pressable onPress={toggle}>
           <Checkbox checked={checked} />
@@ -76,16 +75,16 @@ const ReminderCell = ({
       </View>
       <TextInput
         style={styles.textInput}
-        onChangeText={(newText) => {
-          const newTextNoLineBrakes = newText.replace("\n", "");
+        onChangeText={newText => {
+          const newTextNoLineBrakes = newText.replace('\n', '');
           onChangeText(item, newTextNoLineBrakes);
         }}
         value={item.title}
         autoFocus
         multiline
         numberOfLines={0}
-        onKeyPress={({ nativeEvent: { key: keyValue } }) => {
-          if (keyValue === "Enter") {
+        onKeyPress={({nativeEvent: {key: keyValue}}) => {
+          if (keyValue === 'Enter') {
             onIntroPressed();
             return false;
           }
@@ -103,7 +102,7 @@ const ReminderCell = ({
 const Reminders = () => {
   const [reminders, setReminders] = useState<Reminder[]>([]);
 
-  const lastCreatedId = useRef<string>("");
+  const lastCreatedId = useRef<string>('');
 
   const addReminder = () => {
     createEmptyReminder();
@@ -111,11 +110,11 @@ const Reminders = () => {
   const createEmptyReminder = () => {
     const newID = Math.random().toString(36).substring(2, 15);
     lastCreatedId.current = newID;
-    setReminders((prevReminders) => [
+    setReminders(prevReminders => [
       ...prevReminders,
       {
         id: newID,
-        title: "",
+        title: '',
         selected: false,
       },
     ]);
@@ -124,25 +123,25 @@ const Reminders = () => {
   const updateTitle = useCallback(
     (id: string, title: string) => {
       const newReminders = [...reminders];
-      const elem = newReminders.find((reminder) => reminder.id === id);
+      const elem = newReminders.find(reminder => reminder.id === id);
       if (elem !== undefined) {
         elem.title = title;
       }
       setReminders(newReminders);
     },
-    [setReminders, reminders]
+    [setReminders, reminders],
   );
 
   const removeItem = useCallback(
     (reminder: Reminder) => {
       list.current?.prepareForLayoutAnimationRender();
       setReminders(
-        reminders.filter(({ title }) => {
+        reminders.filter(({title}) => {
           return title !== reminder.title;
-        })
+        }),
       );
     },
-    [setReminders, reminders]
+    [setReminders, reminders],
   );
 
   const list = useRef<FlashList<Reminder> | null>(null);
@@ -151,23 +150,23 @@ const Reminders = () => {
     (item: Reminder, text: string) => {
       updateTitle(item.id, text);
     },
-    [updateTitle]
+    [updateTitle],
   );
 
   const onCompleted = useCallback(
     (item: Reminder) => {
       removeItem(item);
     },
-    [removeItem]
+    [removeItem],
   );
 
   const animateToBottomIfNewItemAdded = (item: Reminder) => {
     if (lastCreatedId.current === item.id) {
-      list.current?.scrollToEnd({ animated: true });
+      list.current?.scrollToEnd({animated: true});
     }
   };
 
-  const renderItem = ({ item }: { item: Reminder }) => {
+  const renderItem = ({item}: {item: Reminder}) => {
     return (
       <ReminderCell
         item={item}
@@ -184,10 +183,9 @@ const Reminders = () => {
       <View
         style={{
           flex: 1,
-          backgroundColor: "#FFF",
-          justifyContent: "space-between",
-        }}
-      >
+          backgroundColor: '#FFF',
+          justifyContent: 'space-between',
+        }}>
         <FlashList
           ref={list}
           renderItem={renderItem}
@@ -221,30 +219,30 @@ const Header = () => {
 
 const styles = StyleSheet.create({
   divider: {
-    width: "100%",
+    width: '100%',
     height: StyleSheet.hairlineWidth,
-    backgroundColor: "#DDD",
+    backgroundColor: '#DDD',
     marginLeft: 55,
   },
   header: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     padding: 8,
   },
   headerTitle: {
-    color: "#007AFE",
+    color: '#007AFE',
     fontSize: 32,
-    fontWeight: "700",
+    fontWeight: '700',
     padding: 8,
   },
   bottomButton: {
     height: 100,
-    alignItems: "flex-start",
+    alignItems: 'flex-start',
     padding: 18,
   },
   cell: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     paddingHorizontal: 8,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   checkbox: {
     padding: 6,
@@ -254,9 +252,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   checkboxImage: {
-    resizeMode: "contain",
-    width: "100%",
-    height: "100%",
+    resizeMode: 'contain',
+    width: '100%',
+    height: '100%',
   },
   textInput: {
     fontSize: 17,

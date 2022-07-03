@@ -1,27 +1,28 @@
-import React, { useContext } from "react";
-import { FlatList, View } from "react-native";
+import React, {useContext} from 'react';
+import {FlatList, View} from 'react-native';
 
-import { DebugContext } from "../Debug";
+import {DebugContext} from '../Debug';
+import useBackNavigation from '../useBackNavigation';
 
-import { tweets } from "./data/tweets";
-import TweetCell from "./TweetCell";
-import { Header, Footer, Divider, Empty } from "./Twitter";
+import {tweets} from './data/tweets';
+import TweetCell from './TweetCell';
+import {Header, Footer, Divider, Empty} from './Twitter';
 
-const TwitterFlatList = () => {
+const TwitterFlatList = ({navigation}: {navigation: any}) => {
   const debugContext = useContext(DebugContext);
-
+  useBackNavigation(navigation);
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <FlatList
         testID="FlatList"
-        keyExtractor={(item) => {
+        keyExtractor={item => {
           return item.id;
         }}
-        renderItem={({ item }) => {
+        renderItem={({item}) => {
           return <TweetCell tweet={item} />;
         }}
         ListHeaderComponent={Header}
-        ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
+        ListHeaderComponentStyle={{backgroundColor: '#ccc'}}
         ListFooterComponent={Footer}
         ItemSeparatorComponent={Divider}
         ListEmptyComponent={Empty()}
@@ -32,7 +33,7 @@ const TwitterFlatList = () => {
           itemVisiblePercentThreshold: 50,
           minimumViewTime: 1000,
         }}
-        onViewableItemsChanged={(info) => {
+        onViewableItemsChanged={info => {
           console.log(info);
         }}
       />
